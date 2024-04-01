@@ -7,7 +7,7 @@ os_distro_eve="eve"
 os_distro=""
 
 get_os_distro() {
-  local version_info=$(< $PROC_DIR/version)
+  local -r version_info=$(< $PROC_DIR/version)
 
   [[ $version_info =~ $os_distro_talos ]] && os_distro=$os_distro_talos
   [[ $version_info =~ $os_distro_eve ]] && os_distro=$os_distro_eve
@@ -21,7 +21,7 @@ get_pid() {
   local status_file
   local name
 
-  for dir in $PROC_DIR/*/; do
+  for dir in "$PROC_DIR"/*/; do
     pid=$(basename "$dir")
     status_file="$PROC_DIR/$pid/status"
 
@@ -43,7 +43,7 @@ get_pid() {
 
 get_os_distro
 
-[[ $os_distro = $os_distro_talos ]] && get_pid "kubelet"
-[[ $os_distro = $os_distro_eve ]] && get_pid "cluster-init.sh"
+[[ $os_distro = "$os_distro_talos" ]] && get_pid "kubelet"
+[[ $os_distro = "$os_distro_eve" ]] && get_pid "cluster-init.sh"
 
-nsenter -t $target_pid -m -n -u -- "$@"
+nsenter -t "$target_pid" -m -n -u -- "$@"
